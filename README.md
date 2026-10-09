@@ -1,3 +1,115 @@
+# Sistema de Almacén Escolar
+
+Sistema web para controlar el almacén de un colegio: lo que **llega desde fuera** (gobierno, donaciones, compras), lo que **hay en stock**, y lo que **sale a los docentes y regresa**. Todo queda registrado en un historial (Kardex) que nunca se borra.
+
+Hecho con **PHP + MySQL** (servidor) y **React** (interfaz). Es una sola página: se navega entre pantallas sin recargar.
+
+> 📦 **Instalación:** abre `INSTALAR.html` (paso a paso con XAMPP o con Docker). Para comprobar que quedó bien: `/verificar.php`.
+
+---
+
+## ¿Qué puede hacer?
+
+| Pantalla | Para qué sirve |
+|---|---|
+| **Inicio** | Resumen: tipos de material, unidades en almacén, unidades prestadas, salidas por devolver y los últimos 8 movimientos. |
+| **Stock actual** | Cuánto hay de cada material en cada almacén, cuánto está prestado y el total del colegio. Permite buscar y filtrar. Desde aquí se hace un **Ajuste** por conteo físico. |
+| **Entradas** | Registrar lo que llega al colegio desde fuera (proveedor, cantidad, costo, fecha). Suma al stock. |
+| **Salidas y retornos** | Entregar material a un docente, y registrar su **devolución** (total o parcial) o una **baja** (si no vuelve). |
+| **Kardex** | Historial completo de movimientos, con filtros por almacén, material y tipo. Muestra el **saldo** del almacén después de cada movimiento. |
+| **Proveedores** | Catálogo de quién entrega material (ej. UGEL, Ministerio, una empresa). |
+| **Materiales** | Catálogo de lo que existe (nombre, unidad: unidad, caja, par…). |
+| **Almacenes** | Dónde se guarda el material (ej. Sala de Cómputo). Puede haber varios. |
+
+### Los tipos de movimiento
+
+| Tipo | ¿Qué pasa con el stock del almacén? | ¿Cuándo se usa? |
+|---|---|---|
+| **Entrada externa** | ➕ Suma | Llegó material de gobierno, donación o compra. |
+| **Salida** | ➖ Resta (queda *pendiente de devolver*) | Un docente se lleva material para una clase. |
+| **Retorno** | ➕ Suma | El docente devuelve (todo o una parte). |
+| **Baja** | ⏸ No cambia | Lo que salió y **no volverá**: consumido, perdido o malogrado. Cierra la deuda del docente. |
+| **Ajuste** | ➕/➖ Corrige | El conteo físico no coincide con el sistema. |
+
+Cómo leer el Stock: **En almacén** es lo que está físicamente ahí ahora; **Prestado** es lo que está en manos de docentes; **Total del colegio** es la suma de ambos.
+
+---
+
+## Cómo se usa
+
+### Primera vez (configuración inicial)
+1. **Proveedores** → crea quién te entrega material (ej. "UGEL").
+2. **Materiales** → crea cada tipo de material (ej. "Laptop XO", unidad "unidad").
+3. **Almacenes** → ya viene creado "Sala de Cómputo". Agrega más si los necesitas.
+
+### Cuando llega material al colegio
+**Entradas** → elige almacén, material y proveedor, escribe la cantidad (y el costo si lo sabes) → *Registrar entrada*. El stock sube.
+
+### Cuando un docente pide material
+**Salidas y retornos** → elige almacén y material (solo aparecen los que tienen stock, con lo disponible entre paréntesis) → escribe cantidad, docente y, si quieres, sesión, grado, sección, nivel y N.º de estudiantes → *Registrar salida*.
+El sistema **no te deja sacar más de lo que hay**.
+
+### Cuando el docente devuelve
+En la tabla **Pendientes de devolución** pulsa **Devolver**. La cantidad viene llena con lo pendiente; si devuelve solo una parte, escribe esa parte. Lo que falte seguirá en la lista.
+
+### Cuando algo no vuelve (se rompió, se gastó, se perdió)
+En esa misma tabla pulsa **Baja** y escribe el motivo. Queda registrado y deja de aparecer como pendiente.
+
+### Cuando el conteo físico no coincide
+**Stock actual** → **Ajustar** en esa fila → escribe lo que realmente contaste y el motivo. El sistema calcula la diferencia y la deja en el Kardex.
+
+### Ejemplo de un día
+1. Llegan **30 laptops** de la UGEL → *Entradas* → stock: 30.
+2. La profesora Ruiz se lleva **10** para 3.º A → *Salidas* → stock: 20, prestado: 10.
+3. Devuelve **8** → *Devolver* → stock: 28, pendiente: 2.
+4. Una laptop se malogró → *Baja* con motivo "pantalla rota" → pendiente: 1.
+5. El Kardex muestra los cuatro movimientos con su saldo.
+
+### Si me equivoqué
+Los movimientos **no se editan ni se borran**, para que el historial sea confiable. Se corrigen con un **Ajuste** (si el stock quedó mal) o una **Baja** (si algo no volverá). Los catálogos (proveedores, materiales, almacenes) sí se pueden editar; un registro que ya tiene stock o movimientos no se puede eliminar.
+
+---
+
+## Reglas que el sistema hace cumplir
+- No se puede sacar más de lo que hay en el almacén.
+- No se puede devolver más de lo que está pendiente.
+- Una baja y un ajuste exigen un **motivo**.
+- Las cantidades son números enteros mayores que 0.
+- Si dos personas operan a la vez, el stock no se descuadra (las operaciones son transaccionales).
+- Todas las fechas usan la hora de Perú (`America/Lima`).
+
+## Lo que **todavía no** hace
+- **No tiene login**: úsalo solo en la red del colegio, o agrégale inicio de sesión antes de publicarlo.
+- No hay traslados entre almacenes (por ahora se hace con un Ajuste en cada almacén).
+- No exporta a Excel o PDF.
+- No avisa cuando un material tiene poco stock.
+- No hay reportes por docente o por período (el Kardex se puede filtrar por almacén, material y tipo).
+
+---
+
+## Para quien lo va a modificar
+
+```
+index.html        Única página (carga React)
+api.php           Toda la lógica del servidor
+config.php        Conexión a MySQL (lee variables de entorno si existen)
+database.sql      Tablas
+verificar.php     Diagnóstico de instalación
+assets/app.js     React compilado (listo para usar)
+src/              Código fuente de React (.jsx): npm install && npm run build
+Dockerfile, docker-compose.yml, .env    Para correrlo con Docker
+```
+
+**Base de datos:** `proveedores`, `materiales`, `almacenes`, `stock` (cuánto hay ahora en cada almacén) y `movimientos` (el Kardex; cada fila guarda el saldo resultante).
+
+**API:** una sola entrada, `api.php?r=<recurso>&a=<acción>`, con cuerpo JSON por POST.
+- Catálogos (`proveedores`, `materiales`, `almacenes`): `listar`, `guardar`, `eliminar`.
+- `inventario`: `stock`, `salidas_activas`, `kardex`, `entrada`, `salida`, `retorno`, `baja`, `ajuste`.
+- Los errores vuelven como `{"error": "mensaje"}` y la interfaz los muestra en un aviso rojo.
+
+**Para agregar un catálogo nuevo** basta con una entrada en `TABLAS` (`api.php`), su tabla en `database.sql` y una configuración de columnas en `src/App.jsx`; la pantalla de CRUD ya es genérica.
+
+
 # 📦 Instalación del Sistema de Almacén
 
 Elige una de las siguientes opciones para poner en marcha el sistema:
