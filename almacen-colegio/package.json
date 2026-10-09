@@ -1,0 +1,7 @@
+{
+  "name": "almacen-colegio",
+  "private": true,
+  "scripts": { "build": "esbuild src/main.jsx --bundle --minify --outfile=assets/app.js --jsx=automatic" },
+  "dependencies": { "react": "^18.3.1", "react-dom": "^18.3.1" },
+  "devDependencies": { "esbuild": "^0.23.0" }
+}

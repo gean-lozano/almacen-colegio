@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo instalar el Sistema de Almacén</title>
+<style>
+body{font-family:Segoe UI,Ubuntu,sans-serif;max-width:760px;margin:30px auto;padding:0 16px;color:#222;line-height:1.55}
+h1{margin-bottom:4px}.sub{color:#666;margin-top:0}
+.paso{display:flex;gap:16px;margin:22px 0;padding:18px;background:#f3f5f7;border-radius:10px}
+.n{flex:0 0 42px;height:42px;border-radius:50%;background:#007bff;color:#fff;font-size:22px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+.paso h2{margin:0 0 6px;font-size:19px}.paso ul{margin:6px 0 0;padding-left:20px}
+code,kbd{background:#e2e6ea;padding:2px 6px;border-radius:4px;font-size:.95em}
+.aviso{background:#fff3cd;border-left:4px solid #e0a800;padding:10px 14px;border-radius:4px;margin-top:10px}
+.ok{background:#d1e7dd;border-left:4px solid #198754;padding:10px 14px;border-radius:4px;margin-top:10px}
+details{margin:8px 0;background:#fff;border:1px solid #dde;border-radius:8px;padding:10px 14px}summary{cursor:pointer;font-weight:600}
+</style></head><body>
+<h1>Instalar el Sistema de Almacén</h1>
+<p class="sub">Opción A: Windows con XAMPP (7 pasos, unos 10 minutos). Opción B: con Docker, más abajo.</p>
+
+<div class="paso"><div class="n">1</div><div>
+<h2>Instala y enciende XAMPP</h2>
+<ul><li>Si no lo tienes, descárgalo de <b>apachefriends.org</b> e instálalo (todo con "Siguiente").</li>
+<li>Abre el <b>XAMPP Control Panel</b> y pulsa <kbd>Start</kbd> en <b>Apache</b> y en <b>MySQL</b>. Deben ponerse en verde.</li></ul></div></div>
+
+<div class="paso"><div class="n">2</div><div>
+<h2>Copia la carpeta del sistema</h2>
+<ul><li>Descomprime el zip. Verás una carpeta llamada <code>almacen-colegio</code>.</li>
+<li>Cópiala dentro de <code>C:\xampp\htdocs\</code>. Debe quedar <code>C:\xampp\htdocs\almacen-colegio\index.html</code>.</li></ul></div></div>
+
+<div class="paso"><div class="n">3</div><div>
+<h2>Abre phpMyAdmin</h2>
+<ul><li>En el navegador entra a <code>http://localhost/phpmyadmin</code> (o pulsa <kbd>Admin</kbd> en la fila de MySQL de XAMPP).</li></ul></div></div>
+
+<div class="paso"><div class="n">4</div><div>
+<h2>Crea la base de datos (vacía)</h2>
+<ul><li>En el menú de la izquierda pulsa <b>Nueva</b>.</li>
+<li>En "Nombre de la base de datos" escribe exactamente: <code>almacen_colegio</code></li>
+<li>Al lado, en el desplegable, elige <code>utf8mb4_unicode_ci</code>.</li>
+<li>Pulsa <kbd>Crear</kbd>.</li></ul></div></div>
+
+<div class="paso"><div class="n">5</div><div>
+<h2>Importa las tablas</h2>
+<ul><li>Haz clic en <code>almacen_colegio</code> en el menú izquierdo (que quede seleccionada).</li>
+<li>Arriba, entra a la pestaña <b>Importar</b>.</li>
+<li>Pulsa <kbd>Seleccionar archivo</kbd> y elige <code>database.sql</code> (está dentro de la carpeta del sistema).</li>
+<li>Baja hasta el final y pulsa <kbd>Importar</kbd> (o "Continuar").</li></ul>
+<div class="ok">Si sale un recuadro verde con "La importación se ha completado", ya está. A la izquierda verás 5 tablas dentro de <code>almacen_colegio</code>.</div></div></div>
+
+<div class="paso"><div class="n">6</div><div>
+<h2>Comprueba que todo esté bien</h2>
+<ul><li>Abre <code>http://localhost/almacen-colegio/verificar.php</code></li>
+<li>Debes ver todo con ✅. Si aparece algún ❌, ahí mismo te dice qué hacer.</li></ul></div></div>
+
+<div class="paso"><div class="n">7</div><div>
+<h2>¡Usa el sistema!</h2>
+<ul><li>Entra a <code>http://localhost/almacen-colegio/</code></li>
+<li>Primer uso, en este orden: <b>Proveedores</b> (por ejemplo "Gobierno / UGEL") → <b>Materiales</b> → <b>Entradas</b> (registrar lo que llegó). Después ya puedes hacer <b>Salidas y retornos</b>.</li></ul></div></div>
+
+<h2>Opción B: instalar con Docker</h2>
+<p>Sirve si prefieres no instalar XAMPP, o si quieres llevar el sistema a otro computador o servidor sin repetir pasos. Crea solo la base de datos y las tablas.</p>
+<div class="paso"><div class="n">1</div><div>
+<h2>Instala Docker Desktop</h2>
+<ul><li>Descárgalo de <b>docker.com</b>, instálalo y ábrelo. Espera a que diga "Engine running".</li></ul></div></div>
+<div class="paso"><div class="n">2</div><div>
+<h2>Cambia la clave de MySQL</h2>
+<ul><li>Abre el archivo <code>.env</code> (en la carpeta del sistema) con el Bloc de notas y cambia <code>cambia-esta-clave</code> por una clave tuya.</li></ul>
+<div class="aviso">Hazlo <b>antes</b> del paso 3. MySQL guarda la clave la primera vez que arranca; si la cambias después, hay que borrar los datos y empezar de cero.</div></div></div>
+<div class="paso"><div class="n">3</div><div>
+<h2>Enciende el sistema</h2>
+<ul><li>Abre una terminal (PowerShell) dentro de la carpeta del sistema. Truco: en el Explorador de archivos, escribe <code>powershell</code> en la barra de direcciones y Enter.</li>
+<li>Ejecuta: <code>docker compose up -d --build</code></li>
+<li>La primera vez tarda unos minutos porque descarga PHP y MySQL.</li></ul></div></div>
+<div class="paso"><div class="n">4</div><div>
+<h2>Entra al sistema</h2>
+<ul><li><code>http://localhost:8080/</code> es el sistema, y <code>http://localhost:8080/verificar.php</code> comprueba la instalación.</li>
+<li>Las tablas ya están creadas, no hay que importar nada.</li></ul></div></div>
+<details><summary>Comandos útiles de Docker</summary>
+<ul><li>Apagar: <code>docker compose down</code> (los datos se conservan)</li>
+<li>Volver a encender: <code>docker compose up -d</code></li>
+<li>Ver errores: <code>docker compose logs web</code> o <code>docker compose logs db</code></li>
+<li><b>Respaldo</b> (hazlo seguido): <code>docker compose exec db sh -c "mysqldump -uroot -p$MYSQL_ROOT_PASSWORD almacen_colegio" &gt; respaldo.sql</code></li>
+<li><b>Borrar todo y empezar de cero</b>: <code>docker compose down -v</code> (¡esto borra los datos!)</li>
+<li>Si cambias archivos del sistema: <code>docker compose up -d --build</code></li></ul></details>
+<details><summary>Si el puerto 8080 está ocupado</summary>En <code>docker-compose.yml</code> cambia <code>"8080:80"</code> por otro puerto, por ejemplo <code>"8081:80"</code>, y entra por <code>http://localhost:8081/</code>.</details>
+
+<h2>Si algo falla</h2>
+<details><summary>"Connection refused" / no abre la página</summary>Apache no está encendido. Pulsa Start en Apache en el panel de XAMPP.</details>
+<details><summary>En verificar.php sale "MySQL está apagado"</summary>Pulsa Start en la fila de MySQL en el panel de XAMPP.</details>
+<details><summary>Sale "Usuario o contraseña incorrectos"</summary>Si le pusiste clave a MySQL, abre <code>config.php</code> con el Bloc de notas y escríbela en <code>DB_PASS</code>.</details>
+<details><summary>Sale "La base almacen_colegio no existe"</summary>Repite el paso 4. El nombre debe ser exactamente <code>almacen_colegio</code>, sin espacios ni mayúsculas.</details>
+<details><summary>Al importar sale un error rojo</summary>Casi siempre es porque no seleccionaste la base antes de importar (paso 5, primer punto), o porque ya habías importado antes. Borra la base (pestaña Operaciones → "Eliminar la base de datos"), créala de nuevo y vuelve a importar.</details>
+<details><summary>Quiero usarlo desde otro computador de la red del colegio</summary>Deja el sistema instalado en un solo computador (el "servidor") y, desde los demás, abre <code>http://IP-DEL-SERVIDOR/almacen-colegio/</code>. La IP la ves en ese computador con el comando <code>ipconfig</code>. Importante: el sistema no tiene clave de acceso, úsalo solo dentro de la red del colegio.</details>
+<details><summary>No uso XAMPP (Laragon, hosting, etc.)</summary>Es igual: crea una base de datos MySQL, importa <code>database.sql</code> en ella, y pon el nombre de la base, el usuario y la clave en <code>config.php</code>. Necesita PHP 7.4 o superior.</details>
+</body></html>
