@@ -117,6 +117,9 @@ Elige una de las siguientes opciones para poner en marcha el sistema:
 - **Opción A:** Instalación en Windows usando **XAMPP** *(7 pasos, ~10 minutos)*.
 - **Opción B:** Instalación rápida con **Docker** *(Recomendada para llevar el sistema a otro equipo sin repetir pasos)*.
 
+  ![pantalla inicio](docs/1.png)
+  ![pantalla salidas y retornos](docs/2.png)
+
 ---
 
 ## 🛠️ Opción A: Instalación con XAMPP (Windows)
