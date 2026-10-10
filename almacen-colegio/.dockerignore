@@ -1,7 +1,0 @@
-src
-node_modules
-package.json
-package-lock.json
-.env
-docker-compose.yml
-Dockerfile
